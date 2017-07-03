@@ -1,5 +1,5 @@
-Kixx Assert
-===========
+Kixx Test
+=========
 An event emitting test runner for ECMAScript.
 
 Copyright and License
