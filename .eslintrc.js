@@ -1,4 +1,8 @@
 module.exports = {
+	"globals": {
+		"setTimeout": true,
+		"clearTimeout": true
+	},
 	"extends": "eslint:recommended",
 	"rules": {
 		"strict": [
