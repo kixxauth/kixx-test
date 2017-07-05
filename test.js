@@ -95,178 +95,212 @@
 
 			x = events[0];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[1];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[2];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[3];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[4];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[5];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[6];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 2a', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[7];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 2a', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[8];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[9];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[10];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[11];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[12];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('should have parent scope', x.test);
 
 			x = events[13];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('should have parent scope', x.test);
 
 			x = events[14];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[15];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[16];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[17];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 3', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
+			assert.isEqual('layer 3', x.parents[2]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[18];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 2a', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[19];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 2a', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2a', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[20];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[21];
 			assert.isEqual('before', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[22];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[23];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('should have set the scope', x.test);
 
 			x = events[24];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('should have parent scope', x.test);
 
 			x = events[25];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('should have parent scope', x.test);
 
 			x = events[26];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[27];
 			assert.isEqual('test', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 			assert.isEqual('is positioned correctly', x.test);
 
 			x = events[28];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[29];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 2b', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
+			assert.isEqual('layer 2b', x.parents[1]);
 			assert.isEqual('blockComplete', x.eventType);
 
 			x = events[30];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockStart', x.eventType);
 
 			x = events[31];
 			assert.isEqual('after', x.type);
-			assert.isEqual('layer 1', x.describe);
+			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockComplete', x.eventType);
 		});
 
@@ -395,27 +429,30 @@
 
 			e = errors[0];
 			assert.isEqual('Thrown in before()', e.message);
-			assert.isEqual('layer 1', e.describe);
+			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('before', e.type);
 
 			e = errors[1];
 			assert.isEqual('Passed in before()', e.message);
-			assert.isEqual('layer 2', e.describe);
+			assert.isEqual('layer 1', e.parents[0]);
+			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('before', e.type);
 
 			e = errors[2];
 			assert.isEqual('Thrown', e.message);
-			assert.isEqual('layer 2', e.describe);
+			assert.isEqual('layer 1', e.parents[0]);
+			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('test', e.type);
 
 			e = errors[3];
 			assert.isEqual('Passed in after()', e.message);
-			assert.isEqual('layer 2', e.describe);
+			assert.isEqual('layer 1', e.parents[0]);
+			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('after', e.type);
 
 			e = errors[4];
 			assert.isEqual('Thrown in after()', e.message);
-			assert.isEqual('layer 1', e.describe);
+			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('after', e.type);
 		});
 
@@ -486,34 +523,37 @@
 				assertErrorMessage(e.message);
 				assertIsTrue(e.timedout);
 				assert.isEqual('before', e.type);
-				assert.isEqual('layer 1', e.describe);
+				assert.isEqual('layer 1', e.parents[0]);
 				assert.isEqual(2, e.timelimit);
 
 				e = errors[1];
 				assertErrorMessage(e.message);
 				assertIsTrue(e.timedout);
 				assert.isEqual('before', e.type);
-				assert.isEqual('layer 2', e.describe);
+				assert.isEqual('layer 1', e.parents[0]);
+				assert.isEqual('layer 2', e.parents[1]);
 				assert.isEqual(2, e.timelimit);
 
 				e = errors[2];
 				assert.isEqual('Thrown Error', e.message);
 				assert.isEqual('after', e.type);
-				assert.isEqual('layer 2', e.describe);
+				assert.isEqual('layer 1', e.parents[0]);
+				assert.isEqual('layer 2', e.parents[1]);
 				assert.isEqual(2, e.timelimit);
 
 				e = errors[3];
 				assertErrorMessage(e.message);
 				assertIsTrue(e.timedout);
 				assert.isEqual('after', e.type);
-				assert.isEqual('layer 1', e.describe);
+				assert.isEqual('layer 1', e.parents[0]);
 				assert.isEqual(2, e.timelimit);
 
 				e = errors[4];
 				assert.isEqual('Late Bloomer', e.message);
 				assert.isEqual(false, e.timedout);
 				assert.isEqual('after', e.type);
-				assert.isEqual('layer 2', e.describe);
+				assert.isEqual('layer 1', e.parents[0]);
+				assert.isEqual('layer 2', e.parents[1]);
 				assert.isEqual(2, e.timelimit);
 			}, 50);
 		});

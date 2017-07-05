@@ -82,12 +82,15 @@
 	function createDescribeBlock(self) {
 		var runner = self.runner;
 		var blockName = self.name;
+		var parents = self.parents.slice();
 		var fn = self.fn;
 		var timeout = self.timeout;
 		var beforeBlocks = [];
 		var testBlocks = [];
 		var afterBlocks = [];
 		var blocks = [];
+
+		parents.push(blockName);
 
 		self.it = function it(name, fn) {
 			if (isNotFullString(name)) {
@@ -101,7 +104,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'test';
-				ev.describe = blockName;
+				ev.parents = parents;
 				ev.test = name;
 				return ev;
 			}
@@ -148,7 +151,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'before';
-				ev.describe = blockName;
+				ev.parents = parents;
 				ev.test = null;
 				ev.timelimit = TO;
 				return ev;
@@ -215,7 +218,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'after';
-				ev.describe = blockName;
+				ev.parents = parents;
 				ev.test = null;
 				ev.timelimit = TO;
 				return ev;
@@ -279,7 +282,14 @@
 				TO = typeof options.timeout === 'number' ? options.timeout : timeout;
 			}
 
-			blocks.push(createDescribeBlock({runner: runner, name: name, fn: fn, timeout: TO}));
+			blocks.push(createDescribeBlock({
+				runner: runner,
+				name: name,
+				parents: parents,
+				fn: fn,
+				timeout: TO
+			}));
+
 			return self;
 		};
 
@@ -331,7 +341,13 @@
 				TO = typeof options.timeout === 'number' ? options.timeout : timeout;
 			}
 
-			blocks.push(createDescribeBlock({runner: self, name: name, fn: fn, timeout: TO}));
+			blocks.push(createDescribeBlock({
+				runner: self,
+				name: name,
+				parents: [],
+				fn: fn,
+				timeout: TO
+			}));
 			return self;
 		};
 
