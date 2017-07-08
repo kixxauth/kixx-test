@@ -104,7 +104,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'test';
-				ev.parents = parents;
+				ev.parents = parents.slice();
 				ev.test = name;
 				return ev;
 			}
@@ -151,7 +151,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'before';
-				ev.parents = parents;
+				ev.parents = parents.slice();
 				ev.test = null;
 				ev.timelimit = TO;
 				return ev;
@@ -218,7 +218,7 @@
 			function decorateEvent(ev) {
 				ev = ev || {};
 				ev.type = 'after';
-				ev.parents = parents;
+				ev.parents = parents.slice();
 				ev.test = null;
 				ev.timelimit = TO;
 				return ev;
