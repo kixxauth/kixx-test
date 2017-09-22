@@ -510,7 +510,7 @@
 
 			assert.isEqual(4, errors.length, 'number of "immediate" errors');
 			assert.isGreaterThan(6, runtime, 'runtime is greater than number of blocks x 2');
-			assert.isLessThan(12, runtime, 'but too not much more');
+			assert.isLessThan(15, runtime, 'but too not much more');
 
 			setTimeout(function () {
 				assert.isEqual(5, errors.length, 'total error count');
@@ -623,7 +623,7 @@
 		modules.kixxTest = kixxTest;
 		modules.kixxAssert = kixxAssert;
 	} else {
-		modules.kixxTest = require('./');
+		modules.kixxTest = require('./kixx-test');
 		modules.kixxAssert = require('kixx-assert');
 	}
 
