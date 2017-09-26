@@ -1,4 +1,4 @@
-/* globals require, KixxTest, KixxAssert */
+/* globals require, console, KixxTest, KixxAssert */
 /* eslint no-console: "off" */
 (function (modules) {
 	'use strict';
@@ -302,6 +302,8 @@
 			assert.isEqual('after', x.type);
 			assert.isEqual('layer 1', x.parents[0]);
 			assert.isEqual('blockComplete', x.eventType);
+
+			console.log('Pass: Nested describe blocks');
 		});
 
 		subject.describe('layer 1', function (layer1) {
@@ -454,6 +456,8 @@
 			assert.isEqual('Thrown in after()', e.message);
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('after', e.type);
+
+			console.log('Pass: Proper handling of assertion errors');
 		});
 
 		subject.describe('layer 1', function (subject) {
@@ -555,6 +559,8 @@
 				assert.isEqual('layer 1', e.parents[0]);
 				assert.isEqual('layer 2', e.parents[1]);
 				assert.isEqual(2, e.timelimit);
+
+				console.log('Pass: Proper handling of timeouts');
 			}, 50);
 		});
 
@@ -612,6 +618,8 @@
 			assert.throwsWithMessage('Second argument to it() must be a Function', function () {
 				subject.it('xxx');
 			}, 'block.it() without block argument');
+
+			console.log('Pass: Throw proper programmer errors');
 		});
 	}());
 
