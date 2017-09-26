@@ -1,8 +1,8 @@
 {
   "name": "kixx-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An event emitting test runner for ECMAScript",
-  "main": "index.js",
+  "main": "kixx-test.js",
   "scripts": {
     "test": "eslint ./ && node ./test.js",
     "lint": "eslint ./"
