@@ -1,11 +1,11 @@
-/* globals require, kixxTest, kixxAssert */
+/* globals require, KixxTest, KixxAssert */
 /* eslint no-console: "off" */
 (function (modules) {
 	'use strict';
-	var kixxTest = modules.kixxTest;
-	var kixxAssert = modules.kixxAssert;
-	var helpers = kixxAssert.helpers;
-	var AssertionError = kixxAssert.AssertionError;
+	var KixxTest = modules.KixxTest;
+	var KixxAssert = modules.KixxAssert;
+	var helpers = KixxAssert.helpers;
+	var AssertionError = KixxAssert.AssertionError;
 
 	// Immutable setter.
 	function set(source, vals) {
@@ -21,7 +21,7 @@
 	}
 
 	// Extend kixx-assert with capability to test for thrown errors.
-	kixxAssert.use(function (KA) {
+	KixxAssert.use(function (KA) {
 		KA.assert.throwsWithMessage = function throwsWithMessage(expected, block, message) {
 			var reason;
 
@@ -50,11 +50,11 @@
 		};
 	});
 
-	var assert = kixxAssert.assert;
+	var assert = KixxAssert.assert;
 
 	// Test setup, teardown, nested blocks, execution order and event attributes.
 	(function () {
-		var subject = kixxTest.createRunner();
+		var subject = KixxTest.createRunner();
 		var errors = [];
 		var events = [];
 		var counter = 0;
@@ -415,7 +415,7 @@
 
 	// Test assertion error.
 	(function () {
-		var subject = kixxTest.createRunner();
+		var subject = KixxTest.createRunner();
 		var errors = [];
 
 		subject.on('error', function (err) {
@@ -497,7 +497,7 @@
 	(function () {
 		var now = new Date();
 		var startTime = now.getTime();
-		var subject = kixxTest.createRunner();
+		var subject = KixxTest.createRunner();
 		var errors = [];
 
 		subject.on('error', function (err) {
@@ -586,7 +586,7 @@
 	}());
 
 	(function () {
-		var subject = kixxTest.createRunner();
+		var subject = KixxTest.createRunner();
 
 		subject.describe('programmer errors', function (subject) {
 			assert.throwsWithMessage('First argument to describe() must be a non-empty String', function () {
@@ -620,11 +620,11 @@
 	var modules = {};
 
 	if (typeof require === 'undefined') {
-		modules.kixxTest = kixxTest;
-		modules.kixxAssert = kixxAssert;
+		modules.KixxTest = KixxTest;
+		modules.KixxAssert = KixxAssert;
 	} else {
-		modules.kixxTest = require('./kixx-test');
-		modules.kixxAssert = require('kixx-assert');
+		modules.KixxTest = require('./kixx-test');
+		modules.KixxAssert = require('kixx-assert');
 	}
 
 	return modules;

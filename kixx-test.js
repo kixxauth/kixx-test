@@ -6,8 +6,8 @@
 	} else if (typeof module === 'object' && module.exports) {
 		factory(module.exports);
 	} else {
-		root.kixxTest = {};
-		factory(root.kixxTest);
+		root.KixxTest = {};
+		factory(root.KixxTest);
 	}
 }(this, function(exports) {
 	'use strict';
