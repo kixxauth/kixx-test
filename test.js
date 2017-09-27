@@ -4,6 +4,7 @@
 	'use strict';
 	var KixxTest = modules.KixxTest;
 	var KixxAssert = modules.KixxAssert;
+	var assert = KixxAssert.assert;
 	var helpers = KixxAssert.helpers;
 	var AssertionError = KixxAssert.AssertionError;
 
@@ -49,8 +50,6 @@
 			return true;
 		};
 	});
-
-	var assert = KixxAssert.assert;
 
 	// Test setup, teardown, nested blocks, execution order and event attributes.
 	(function () {
