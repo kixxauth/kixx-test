@@ -418,6 +418,16 @@
 	(function () {
 		var subject = KixxTest.createRunner();
 		var errors = [];
+		var started = 0;
+		var completed = 0;
+
+		subject.on('blockStart', function () {
+			started += 1;
+		});
+
+		subject.on('blockComplete', function () {
+			completed += 1;
+		});
 
 		subject.on('error', function (err) {
 			errors.push(err);
@@ -427,6 +437,9 @@
 			var e;
 
 			subject.removeAllListeners();
+
+			assert.isGreaterThan(0, started);
+			assert.isEqual(started, completed);
 
 			e = errors[0];
 			assert.isEqual('Thrown in before()', e.message);

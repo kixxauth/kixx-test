@@ -121,7 +121,7 @@
 				}
 
 				if (err) runner.emit('error', decorateEvent(err));
-				else runner.emit('blockComplete', decorateEvent());
+				runner.emit('blockComplete', decorateEvent());
 
 				next();
 			}
