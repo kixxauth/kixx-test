@@ -89,8 +89,16 @@
 		var testBlocks = [];
 		var afterBlocks = [];
 		var blocks = [];
+		var halt = false;
+		var emitter = createEmitter();
+		var parentEmitter = self.parentEmitter;
 
 		parents.push(blockName);
+
+		parentEmitter.on('halt', function () {
+			halt = true;
+			emitter.emit('halt');
+		});
 
 		self.it = function it(name, fn) {
 			if (isNotFullString(name)) {
@@ -114,10 +122,12 @@
 
 				var err;
 
-				try {
-					fn.call(null);
-				} catch (e) {
-					err = e;
+				if (!halt) {
+					try {
+						fn.call(null);
+					} catch (e) {
+						err = e;
+					}
 				}
 
 				if (err) runner.emit('error', decorateEvent(err));
@@ -176,6 +186,8 @@
 					if (err && err !== errorState) {
 						err.timedout = timedout;
 						errorState = err;
+						halt = true;
+						emitter.emit('halt', true);
 						runner.emit('error', decorateEvent(err));
 					}
 
@@ -287,7 +299,8 @@
 				name: name,
 				parents: parents,
 				fn: fn,
-				timeout: TO
+				timeout: TO,
+				parentEmitter: emitter
 			}));
 
 			return self;
@@ -346,8 +359,10 @@
 				name: name,
 				parents: [],
 				fn: fn,
-				timeout: TO
+				timeout: TO,
+				parentEmitter: self
 			}));
+
 			return self;
 		};
 

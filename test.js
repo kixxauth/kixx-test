@@ -452,19 +452,20 @@
 			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('before', e.type);
 
-			e = errors[2];
-			assert.isEqual('Thrown', e.message);
-			assert.isEqual('layer 1', e.parents[0]);
-			assert.isEqual('layer 2', e.parents[1]);
-			assert.isEqual('test', e.type);
+			// "it" tests are not executed if there is an error in the before block
+			// e = errors[2];
+			// assert.isEqual('Thrown', e.message);
+			// assert.isEqual('layer 1', e.parents[0]);
+			// assert.isEqual('layer 2', e.parents[1]);
+			// assert.isEqual('test', e.type);
 
-			e = errors[3];
+			e = errors[2];
 			assert.isEqual('Passed in after()', e.message);
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('after', e.type);
 
-			e = errors[4];
+			e = errors[3];
 			assert.isEqual('Thrown in after()', e.message);
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('after', e.type);
