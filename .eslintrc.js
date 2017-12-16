@@ -1,4 +1,7 @@
 module.exports = {
+	"parserOptions": {
+		"ecmaVersion": 5
+	},
 	"globals": {
 		"setTimeout": true,
 		"clearTimeout": true
@@ -85,6 +88,9 @@ module.exports = {
 		"quotes": [
 			"error",
 			"single"
+		],
+		"no-console": [
+			"warn"
 		],
 		"no-warning-comments": [
 			"warn",
