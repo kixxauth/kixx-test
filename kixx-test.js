@@ -152,6 +152,30 @@
 			return self;
 		};
 
+		self.xit = function xit(name) {
+			if (isNotFullString(name)) {
+				throw new Error('First argument to xit() must be a non-empty String');
+			}
+
+			function decorateEvent(ev) {
+				ev = ev || {};
+				ev.type = 'pendingTest';
+				ev.parents = parents.slice();
+				ev.test = name;
+				return ev;
+			}
+
+			function test(next) {
+				runner.emit('blockStart', decorateEvent());
+				runner.emit('blockComplete', decorateEvent());
+				next();
+			}
+
+			testBlocks.push(test);
+
+			return self;
+		};
+
 		self.before = function before(fn, options) {
 			if (isNotFunction(fn)) {
 				throw new Error('First argument to before() must be a Function');
@@ -327,6 +351,27 @@
 			return self;
 		};
 
+		self.xdescribe = function xdescribe(name) {
+			if (isNotFullString(name)) {
+				throw new Error('First argument to xdescribe() must be a non-empty String');
+			}
+
+			function block(t) {
+				t.xit('is pending');
+			}
+
+			blocks.push(createDescribeBlock({
+				runner: runner,
+				name: name,
+				parents: parents,
+				fn: block,
+				timeout: 0,
+				parentEmitter: emitter
+			}));
+
+			return self;
+		};
+
 		// Compose an Array of the before blocks, followed by nested blocks,
 		// followed by after blocks.
 		self.getFunctionsArray = function () {
@@ -393,6 +438,27 @@
 		function onEnd() {
 			self.emit('end');
 		}
+
+		self.xdescribe = function xdescribe(name) {
+			if (isNotFullString(name)) {
+				throw new Error('First argument to xdescribe() must be a non-empty String');
+			}
+
+			function block(t) {
+				t.xit('is pending');
+			}
+
+			blocks.push(createDescribeBlock({
+				runner: self,
+				name: name,
+				parents: [],
+				fn: block,
+				timeout: 0,
+				parentEmitter: self
+			}));
+
+			return self;
+		};
 
 		self.run = function run() {
 			var functions = getAllFunctions().reverse();

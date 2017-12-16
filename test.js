@@ -534,7 +534,7 @@
 
 			assert.isEqual(3, errors.length, 'number of "immediate" errors');
 			assert.isGreaterThan(4, runtime, 'runtime is greater than number of blocks x 2');
-			assert.isLessThan(10, runtime, 'but too not much more');
+			assert.isLessThan(20, runtime, 'but too not much more');
 
 			setTimeout(function () {
 				assert.isEqual(4, errors.length, 'total error count');
@@ -650,6 +650,8 @@
 				b = blockComplete[1];
 				assert.isEqual('after', b.type);
 				assertIsFalse(b.timedout);
+
+				console.log('Pass: Timeout error only in before block.');
 			}, 50);
 		});
 
@@ -665,6 +667,87 @@
 				});
 			});
 		}, {timeout: 15});
+
+		subject.run();
+	}());
+
+	// Pending describe and test blocks.
+	(function () {
+		var subject = KixxTest.createRunner();
+		var errors = [];
+		var blockStart = [];
+		var blockComplete = [];
+
+		subject.on('error', function (err) {
+			errors.push(err);
+		});
+
+		subject.on('blockStart', function (ev) {
+			blockStart.push(ev);
+		});
+
+		subject.on('blockComplete', function (ev) {
+			blockComplete.push(ev);
+		});
+
+		subject.on('end', function () {
+			assert.isEqual(0, errors.length, 'no errors');
+			assert.isEqual(3, blockStart.length, 'block starts');
+			assert.isEqual(3, blockComplete.length, 'block completes');
+
+			var a;
+			var b;
+
+			a = blockStart[0];
+			assert.isEqual('pendingTest', a.type);
+			assert.isEqual('root block', a.parents[0]);
+			assert.isEqual('is pending', a.test);
+			assert.isEmpty(a.timeout);
+
+			a = blockStart[1];
+			assert.isEqual('pendingTest', a.type);
+			assert.isEqual('layer 1', a.parents[0]);
+			assert.isEqual('is test block', a.test);
+			assert.isEmpty(a.timeout);
+
+			a = blockStart[2];
+			assert.isEqual('pendingTest', a.type);
+			assert.isEqual('layer 1', a.parents[0]);
+			assert.isEqual('layer 2', a.parents[1]);
+			assert.isEqual('is pending', a.test);
+			assert.isEmpty(a.timeout);
+
+			b = blockComplete[0];
+			assert.isEqual('pendingTest', b.type);
+			assert.isEqual('root block', b.parents[0]);
+			assert.isEqual('is pending', b.test);
+			assert.isEmpty(b.timeout);
+
+			b = blockComplete[1];
+			assert.isEqual('pendingTest', b.type);
+			assert.isEqual('layer 1', b.parents[0]);
+			assert.isEqual('is test block', b.test);
+			assert.isEmpty(b.timeout);
+
+			b = blockComplete[2];
+			assert.isEqual('pendingTest', b.type);
+			assert.isEqual('layer 1', b.parents[0]);
+			assert.isEqual('layer 2', b.parents[1]);
+			assert.isEqual('is pending', b.test);
+			assert.isEmpty(b.timeout);
+
+			console.log('Pass: Pending blocks.');
+		});
+
+		subject.xdescribe('root block');
+
+		subject.describe('layer 1', function (t) {
+			t.xdescribe('layer 2', function (t) {
+				t.it('should not be run', function () {});
+			});
+
+			t.xit('is test block');
+		});
 
 		subject.run();
 	}());
