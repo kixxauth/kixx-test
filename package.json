@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/kixxauth/kixx-test#readme",
   "devDependencies": {
-    "kixx-assert": "1.0.2"
+    "kixx-assert": "1.0.3"
   }
 }
