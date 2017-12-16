@@ -320,6 +320,8 @@
 			return self;
 		};
 
+		// Compose an Array of the before blocks, followed by nested blocks,
+		// followed by after blocks.
 		self.getFunctionsArray = function () {
 			var list = beforeBlocks.concat(testBlocks);
 
