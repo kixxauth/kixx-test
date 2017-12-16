@@ -26,6 +26,7 @@
 		};
 	}
 
+	// Create our own version of an event emitter.
 	function createEmitter(self) {
 		self = self || {};
 
@@ -79,24 +80,32 @@
 		return self;
 	}
 
+	// Create a describe block, which can nest both tests and other
+	// describe blocks. The instance created will be passed into the
+	// block functions for nested describe blocks.
 	function createDescribeBlock(self) {
 		var runner = self.runner;
 		var blockName = self.name;
+		// Create a copy of the parent blocks Array so we can't mutate it.
 		var parents = self.parents.slice();
+		// `fn` is the block Function itself.
 		var fn = self.fn;
 		var timeout = self.timeout;
 		var beforeBlocks = [];
 		var testBlocks = [];
 		var afterBlocks = [];
 		var blocks = [];
+		// We may need to halt nested blocks if a parent block setup failed.
 		var halt = false;
 		var emitter = createEmitter();
 		var parentEmitter = self.parentEmitter;
 
 		parents.push(blockName);
 
+		// Listen to see if a parent block setup failed and we need to halt.
 		parentEmitter.on('halt', function () {
 			halt = true;
+			// Emit the "halt" event to child blocks.
 			emitter.emit('halt');
 		});
 
@@ -122,6 +131,8 @@
 
 				var err;
 
+				// Run the test, but only if we have not been halted by a halt event
+				// in a parent block.
 				if (!halt) {
 					try {
 						fn.call(null);
@@ -150,6 +161,7 @@
 				throw new Error('First argument to before() must be a Function with done() callback');
 			}
 
+			// There are a number of ways the timeout can be set. Check them all.
 			var TO;
 			if (typeof options === 'number') {
 				TO = options;
@@ -219,6 +231,7 @@
 				throw new Error('First argument to after() must be a Function with done() callback');
 			}
 
+			// There are a number of ways the timeout can be set. Check them all.
 			var TO;
 			if (typeof options === 'number') {
 				TO = options;
@@ -286,6 +299,7 @@
 				throw new Error('Second argument to describe() must be a Function');
 			}
 
+			// There are a number of ways the timeout can be set. Check them all.
 			var TO;
 			if (typeof options === 'number') {
 				TO = options;
@@ -337,6 +351,7 @@
 			return functions;
 		}
 
+		// The root describe block.
 		self.describe = function describe(name, fn, options) {
 			if (isNotFullString(name)) {
 				throw new Error('First argument to describe() must be a non-empty String');
