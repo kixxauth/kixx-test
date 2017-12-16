@@ -604,6 +604,71 @@
 		subject.run();
 	}());
 
+	// Test timeout error only in before block.
+	(function () {
+		var subject = KixxTest.createRunner();
+		var errors = [];
+		var blockStart = [];
+		var blockComplete = [];
+
+		subject.on('error', function (err) {
+			errors.push(err);
+		});
+
+		subject.on('blockStart', function (ev) {
+			blockStart.push(ev);
+		});
+
+		subject.on('blockComplete', function (ev) {
+			blockComplete.push(ev);
+		});
+
+		subject.on('end', function () {
+			setTimeout(function () {
+				var assertErrorMessage = assert.isMatch(/^Failed to [a-z\s()]+ within the specified time limit \([\d]{2}ms\).$/);
+				var assertIsTrue = assert.isEqual(true);
+				var assertIsFalse = assert.isEqual(false);
+
+				assert.isEqual(1, errors.length, 'number of "immediate" errors');
+
+				var e = errors[0];
+				assertErrorMessage(e.message);
+				assertIsTrue(e.timedout);
+				assert.isEqual('before', e.type);
+				assert.isEqual('layer 1', e.parents[0]);
+				assert.isEqual(15, e.timelimit);
+
+				var b;
+				assert.isEqual(2, blockComplete.length, 'both blocks completed');
+
+				// before() block times out.
+				b = blockComplete[0];
+				assert.isEqual('before', b.type);
+				assertIsTrue(b.timedout);
+
+				// after() block does not timeout.
+				b = blockComplete[1];
+				assert.isEqual('after', b.type);
+				assertIsFalse(b.timedout);
+			}, 50);
+		});
+
+		subject.describe('layer 1', function (t) {
+			t.describe('layer 2', function (t) {
+				// This before() block is never executed, since a parent failed.
+				t.before(function (done) {
+					setTimeout(done, 20);
+				});
+
+				t.after(function (done) {
+					setTimeout(done, 1);
+				});
+			});
+		}, {timeout: 15});
+
+		subject.run();
+	}());
+
 	(function () {
 		var subject = KixxTest.createRunner();
 
