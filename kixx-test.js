@@ -210,10 +210,16 @@
 					}
 				}
 
-				try {
-					fn.call(null, done);
-				} catch (err) {
-					done(err);
+				// Run the block, but only if we have not been halted by a halt event
+				// in a parent block.
+				if (!halt) {
+					try {
+						fn.call(null, done);
+					} catch (err) {
+						done(err);
+					}
+				} else {
+					done();
 				}
 			}
 
@@ -278,6 +284,7 @@
 					}
 				}
 
+				// The cleanup after() blocks are always executed, even when there is a halt.
 				try {
 					fn.call(null, done);
 				} catch (err) {

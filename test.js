@@ -446,11 +446,12 @@
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('before', e.type);
 
-			e = errors[1];
-			assert.isEqual('Passed in before()', e.message);
-			assert.isEqual('layer 1', e.parents[0]);
-			assert.isEqual('layer 2', e.parents[1]);
-			assert.isEqual('before', e.type);
+			// "before" block is not executed because of the failure in the parent.
+			// e = errors[1];
+			// assert.isEqual('Passed in before()', e.message);
+			// assert.isEqual('layer 1', e.parents[0]);
+			// assert.isEqual('layer 2', e.parents[1]);
+			// assert.isEqual('before', e.type);
 
 			// "it" tests are not executed if there is an error in the before block
 			// e = errors[2];
@@ -459,13 +460,15 @@
 			// assert.isEqual('layer 2', e.parents[1]);
 			// assert.isEqual('test', e.type);
 
-			e = errors[2];
+			// The cleanup after() blocks are always executed, even when there is
+			// an error in a parent block.
+			e = errors[1];
 			assert.isEqual('Passed in after()', e.message);
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('layer 2', e.parents[1]);
 			assert.isEqual('after', e.type);
 
-			e = errors[3];
+			e = errors[2];
 			assert.isEqual('Thrown in after()', e.message);
 			assert.isEqual('layer 1', e.parents[0]);
 			assert.isEqual('after', e.type);
@@ -485,6 +488,8 @@
 			});
 
 			subject.describe('layer 2', function (subject) {
+				// This is never executed because of the error thrown in the parent
+				// before() block.
 				subject.before(function (done) {
 					done(new Error('Passed in before()'));
 				});
@@ -493,6 +498,8 @@
 					done(new Error('Passed in after()'));
 				});
 
+				// This is never executed because of the error thrown in the parent
+				// before() block.
 				subject.it('throws', function () {
 					throw new Error('Thrown');
 				});
@@ -525,12 +532,12 @@
 			var now = new Date();
 			var runtime = now.getTime() - startTime;
 
-			assert.isEqual(4, errors.length, 'number of "immediate" errors');
-			assert.isGreaterThan(6, runtime, 'runtime is greater than number of blocks x 2');
-			assert.isLessThan(15, runtime, 'but too not much more');
+			assert.isEqual(3, errors.length, 'number of "immediate" errors');
+			assert.isGreaterThan(4, runtime, 'runtime is greater than number of blocks x 2');
+			assert.isLessThan(10, runtime, 'but too not much more');
 
 			setTimeout(function () {
-				assert.isEqual(5, errors.length, 'total error count');
+				assert.isEqual(4, errors.length, 'total error count');
 
 				var assertErrorMessage = assert.isMatch(/^Failed to [a-z\s()]+ within the specified time limit \([\d]{1}ms\).$/);
 				var assertIsTrue = assert.isEqual(true);
@@ -544,28 +551,20 @@
 				assert.isEqual(2, e.timelimit);
 
 				e = errors[1];
-				assertErrorMessage(e.message);
-				assertIsTrue(e.timedout);
-				assert.isEqual('before', e.type);
-				assert.isEqual('layer 1', e.parents[0]);
-				assert.isEqual('layer 2', e.parents[1]);
-				assert.isEqual(2, e.timelimit);
-
-				e = errors[2];
 				assert.isEqual('Thrown Error', e.message);
 				assert.isEqual('after', e.type);
 				assert.isEqual('layer 1', e.parents[0]);
 				assert.isEqual('layer 2', e.parents[1]);
 				assert.isEqual(2, e.timelimit);
 
-				e = errors[3];
+				e = errors[2];
 				assertErrorMessage(e.message);
 				assertIsTrue(e.timedout);
 				assert.isEqual('after', e.type);
 				assert.isEqual('layer 1', e.parents[0]);
 				assert.isEqual(2, e.timelimit);
 
-				e = errors[4];
+				e = errors[3];
 				assert.isEqual('Late Bloomer', e.message);
 				assert.isEqual(false, e.timedout);
 				assert.isEqual('after', e.type);
@@ -587,6 +586,7 @@
 			});
 
 			subject.describe('layer 2', function (subject) {
+				// This before() block is never executed, since a parent failed.
 				subject.before(function (done) {
 					setTimeout(done, 5);
 				});
