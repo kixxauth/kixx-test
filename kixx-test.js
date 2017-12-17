@@ -20,6 +20,24 @@
 		return typeof fn !== 'function';
 	}
 
+	function extend(a, b) {
+		var prop;
+		for (prop in b) {
+			if (Object.prototype.hasOwnProperty.call(b, prop)) {
+				a[prop] = b[prop];
+			}
+		}
+		return a;
+	}
+
+	function filter(fn, list) {
+		var newList = [];
+		for (var i = list.length - 1; i >= 0; i--) {
+			if (fn(list[i])) newList.push(list[i]);
+		}
+		return newList;
+	}
+
 	function linkFunctions(next, func) {
 		return function link() {
 			return func(next);
@@ -374,11 +392,34 @@
 
 		// Compose an Array of the before blocks, followed by nested blocks,
 		// followed by after blocks.
-		self.getFunctionsArray = function () {
-			var list = beforeBlocks.concat(testBlocks);
+		self.getFunctionsArray = function (options) {
+			options = options || {};
+			var pattern = options.pattern;
+
+			// If there is an exlusive pattern, check to see if the block name matches.
+			var filteredTestBlocks;
+			if (pattern) {
+				filteredTestBlocks = filter(function (block) {
+					return block.name.indexOf(pattern.slice(0, block.name.length)) === 0;
+				}, testBlocks);
+			} else {
+				filteredTestBlocks = testBlocks;
+			}
+
+			var list = beforeBlocks.concat(filteredTestBlocks);
 
 			for (var i = 0; i < blocks.length; i++) {
-				list = list.concat(blocks[i].getFunctionsArray());
+				var block = blocks[i];
+				// If there is an exlusive pattern, check to see if the block name matches.
+				if (pattern) {
+					if (block.name.indexOf(pattern.slice(0, block.name.length)) === 0) {
+						options = extend({}, options);
+						options.pattern = pattern.slice(block.name.length +1, pattern.length);
+						list = list.concat(blocks[i].getFunctionsArray(options));
+					}
+				} else {
+					list = list.concat(blocks[i].getFunctionsArray(options));
+				}
 			}
 
 			list = list.concat(afterBlocks);
@@ -395,11 +436,23 @@
 		var blocks = [];
 		var timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
 
-		function getAllFunctions() {
+		function getAllFunctions(options) {
+			options = options || {};
+			var pattern = options.pattern || false;
 			var functions = [];
 
 			for (var i = 0; i < blocks.length; i++) {
-				functions = functions.concat(blocks[i].getFunctionsArray());
+				var block = blocks[i];
+				// If there is an exlusive pattern, check to see if the block name matches.
+				if (pattern) {
+					if (block.name.indexOf(pattern.slice(0, block.name.length)) === 0) {
+						options = extend({}, options);
+						options.pattern = pattern.slice(block.name.length +1, pattern.length);
+						functions = functions.concat(blocks[i].getFunctionsArray(options));
+					}
+				} else {
+					functions = functions.concat(blocks[i].getFunctionsArray(options));
+				}
 			}
 
 			return functions;
@@ -460,8 +513,13 @@
 			return self;
 		};
 
-		self.run = function run() {
-			var functions = getAllFunctions().reverse();
+		self.run = function run(options) {
+			options = options || {};
+			if (options.pattern && isNotFullString(options.pattern)) {
+				throw new Error('`options.pattern` must be a non-empty String');
+			}
+
+			var functions = getAllFunctions(options).reverse();
 			var next = onEnd;
 
 			for (var i = 0; i < functions.length; i++) {

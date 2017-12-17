@@ -752,6 +752,62 @@
 		subject.run();
 	}());
 
+	// Test exclusive pattern.
+	(function () {
+		var subject = KixxTest.createRunner();
+		var errors = [];
+		var blockStart = [];
+		var blockComplete = [];
+
+		subject.on('error', function (err) {
+			errors.push(err);
+		});
+
+		subject.on('blockStart', function (ev) {
+			blockStart.push(ev);
+		});
+
+		subject.on('blockComplete', function (ev) {
+			blockComplete.push(ev);
+		});
+
+		subject.on('end', function () {
+			assert.isEqual(0, errors.length, 'no errors');
+			assert.isEqual(1, blockStart.length, 'block starts');
+			assert.isEqual(1, blockComplete.length, 'block completes');
+
+			var a;
+			var b;
+
+			a = blockStart[0];
+			assert.isEqual('test', a.type);
+			assert.isEqual('root layer', a.parents[0]);
+			assert.isEqual('layer 1 B', a.parents[1]);
+			assert.isEqual('should something 1 B', a.test);
+			assert.isEmpty(a.timeout);
+
+			b = blockComplete[0];
+			assert.isEqual('test', b.type);
+			assert.isEqual('root layer', b.parents[0]);
+			assert.isEqual('layer 1 B', b.parents[1]);
+			assert.isEqual('should something 1 B', b.test);
+			assert.isEmpty(b.timeout);
+
+			console.log('Pass: exclusive pattern');
+		});
+
+		subject.describe('root layer', function (t) {
+			t.describe('layer 1 A', function (t) {
+				t.it('should something 1 A', function() {});
+			});
+			t.describe('layer 1 B', function (t) {
+				t.it('should something 1 B', function() {});
+			});
+		});
+
+		subject.run({pattern: 'root layer layer 1 B'});
+	}());
+
 	(function () {
 		var subject = KixxTest.createRunner();
 
