@@ -252,6 +252,8 @@
 						runner.emit('blockComplete', decorateEvent({timedout: timedout}));
 						next();
 					}
+
+					return null;
 				}
 
 				// Run the block, but only if we have not been halted by a halt event
@@ -326,6 +328,8 @@
 						runner.emit('blockComplete', decorateEvent({timedout: timedout}));
 						next();
 					}
+
+					return null;
 				}
 
 				// The cleanup after() blocks are always executed, even when there is a halt.
