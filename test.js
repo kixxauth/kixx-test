@@ -754,7 +754,7 @@
 
 	// Test exclusive pattern.
 	(function () {
-		var subject = KixxTest.createRunner();
+		var subject = KixxTest.createRunner({pattern: 'root layer layer 1 B'});
 		var errors = [];
 		var blockStart = [];
 		var blockComplete = [];
@@ -805,7 +805,7 @@
 			});
 		});
 
-		subject.run({pattern: 'root layer layer 1 B'});
+		subject.run();
 	}());
 
 	(function () {

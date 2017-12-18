@@ -432,6 +432,12 @@
 
 	exports.createRunner = function createRunner(options) {
 		options = options || {};
+
+		options = options || {};
+		if (options.pattern && isNotFullString(options.pattern)) {
+			throw new Error('`options.pattern` must be a non-empty String');
+		}
+
 		var self = createEmitter();
 		var blocks = [];
 		var timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
@@ -513,12 +519,7 @@
 			return self;
 		};
 
-		self.run = function run(options) {
-			options = options || {};
-			if (options.pattern && isNotFullString(options.pattern)) {
-				throw new Error('`options.pattern` must be a non-empty String');
-			}
-
+		self.run = function run() {
 			var functions = getAllFunctions(options).reverse();
 			var next = onEnd;
 
