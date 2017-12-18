@@ -165,6 +165,7 @@
 				next();
 			}
 
+			test.testName = name;
 			testBlocks.push(test);
 
 			return self;
@@ -189,6 +190,7 @@
 				next();
 			}
 
+			test.testName = name;
 			testBlocks.push(test);
 
 			return self;
@@ -400,7 +402,7 @@
 			var filteredTestBlocks;
 			if (pattern) {
 				filteredTestBlocks = filter(function (block) {
-					return block.name.indexOf(pattern.slice(0, block.name.length)) === 0;
+					return block.testName.indexOf(pattern.slice(0, block.testName.length)) === 0;
 				}, testBlocks);
 			} else {
 				filteredTestBlocks = testBlocks;

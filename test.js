@@ -776,7 +776,7 @@
 
 	// Test exclusive pattern.
 	(function () {
-		var subject = KixxTest.createRunner({pattern: 'root layer layer 1 B'});
+		var subject = KixxTest.createRunner({pattern: 'root layer layer 1 B should something else 1 B'});
 		var errors = [];
 		var blockStart = [];
 		var blockComplete = [];
@@ -805,14 +805,14 @@
 			assert.isEqual('test', a.type);
 			assert.isEqual('root layer', a.parents[0]);
 			assert.isEqual('layer 1 B', a.parents[1]);
-			assert.isEqual('should something 1 B', a.test);
+			assert.isEqual('should something else 1 B', a.test);
 			assert.isEmpty(a.timeout);
 
 			b = blockComplete[0];
 			assert.isEqual('test', b.type);
 			assert.isEqual('root layer', b.parents[0]);
 			assert.isEqual('layer 1 B', b.parents[1]);
-			assert.isEqual('should something 1 B', b.test);
+			assert.isEqual('should something else 1 B', b.test);
 			assert.isEmpty(b.timeout);
 
 			console.log('Pass: exclusive pattern');
@@ -824,6 +824,7 @@
 			});
 			t.describe('layer 1 B', function (t) {
 				t.it('should something 1 B', function() {});
+				t.it('should something else 1 B', function() {});
 			});
 		});
 
