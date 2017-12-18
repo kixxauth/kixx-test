@@ -51,6 +51,28 @@
 		};
 	});
 
+	// Event handlers are executed in the expected order.
+	(function () {
+		var subject = KixxTest.createRunner();
+		var results = [];
+
+		subject.on('end', function () {
+			results.push(1);
+		});
+
+		subject.on('end', function () {
+			results.push(2);
+
+			assert.isEqual(2, results.length, 'results.length');
+			assert.isEqual(1, results[0]);
+			assert.isEqual(2, results[1]);
+
+			console.log('Pass: Event handlers executed in the expected order');
+		});
+
+		subject.run();
+	}());
+
 	// Test setup, teardown, nested blocks, execution order and event attributes.
 	(function () {
 		var subject = KixxTest.createRunner();

@@ -62,7 +62,7 @@
 			var handlers = events[type];
 
 			if (handlers) {
-				for (var i = handlers.length - 1; i >= 0; i--) {
+				for (var i = 0; i < handlers.length; i++) {
 					var handler = handlers[i];
 					handler.call(self, event);
 				}
@@ -76,7 +76,7 @@
 			var index;
 
 			if (handlers) {
-				for (var i = handlers.length - 1; i >= 0; i--) {
+				for (var i = 0; i < handlers.length; i++) {
 					if (handler && handler === handlers[i]) {
 						index = i;
 						continue;
