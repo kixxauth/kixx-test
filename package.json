@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/kixxauth/kixx-test#readme",
   "devDependencies": {
-    "eslint": "5.13.0",
-    "kixx-assert": "1.0.5"
+    "eslint": "~6.6.0",
+    "kixx-assert": "~1.0.5"
   }
 }
