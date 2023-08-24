@@ -1,24 +1,8 @@
 Kixx Test
 =========
-An event emitting test runner for ECMAScript.
+A limited framework for scripting tests in JavaScript environments.
 
-## Install in the browser:
-__AMD__ and __Browserify__ are supported. Or include in your HTML:
-
-```html
-<script src="./kixx-test.js" type="text/javascript"></script>
-```
-
-Then use in your JavaScript:
-```js
-var KixxTest = window.KixxTest;
-```
-
-## Install in a Node.js project:
-Install with NPM on the command line:
-```
-$ npm install --save kixx-test
-```
+Created by [Kris Walker](https://www.kriswalker.me) 2017 - 2023.
 
 Then use in your project:
 ```js
@@ -142,7 +126,6 @@ runner.run();
 
 Copyright and License
 ---------------------
-Copyright: (c) 2017 by Kris Walker (www.kixx.name)
+Copyright: (c) 2017 - 2023 by Kris Walker (www.kriswalker.me)
 
 Unless otherwise indicated, all source code is licensed under the MIT license. See MIT-LICENSE for details.
-

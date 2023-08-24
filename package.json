@@ -1,30 +1,30 @@
 {
   "name": "kixx-test",
-  "version": "1.4.3",
-  "description": "An event emitting test runner for ECMAScript",
-  "main": "kixx-test.js",
+  "version": "2.0.0",
+  "description": "A limited framework for scripting tests in JavaScript environments",
+  "type": "module",
+  "main": "mod.js",
   "scripts": {
-    "test": "eslint ./ && node ./test.js",
+    "test": "eslint ./ && node ./test/run-tests.js",
     "lint": "eslint ./"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kixxauth/kixx-test.git"
   },
+  "files": [
+    "kixx-assert.js"
+  ],
+  "devDependencies": {
+    "eslint": "~8.47.0"
+  },
   "keywords": [
-    "functional",
-    "events",
-    "library",
     "testing"
   ],
-  "author": "Kris Walker (www.kixx.name)",
+  "author": "Kris Walker (www.kriswalker.me)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kixxauth/kixx-test/issues"
   },
-  "homepage": "https://github.com/kixxauth/kixx-test#readme",
-  "devDependencies": {
-    "eslint": "8.22.0",
-    "kixx-assert": "~1.0.5"
-  }
+  "homepage": "https://github.com/kixxauth/kixx-test#readme"
 }
