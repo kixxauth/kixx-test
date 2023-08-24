@@ -2,6 +2,8 @@ Kixx Test
 =========
 A limited framework for scripting tests in JavaScript environments.
 
+We require Node.js >= 14.17.0 for [ES6 module stabilization](https://nodejs.org/dist/latest-v18.x/docs/api/esm.html#modules-ecmascript-modules).
+
 Created by [Kris Walker](https://www.kriswalker.me) 2017 - 2023.
 
 Then use in your project:
