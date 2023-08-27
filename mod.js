@@ -68,13 +68,11 @@ export function describe(name, fn, opts = {}) {
         afterBlocks: [],
     };
 
-    const ancestorNames = [ name ];
-
     const newDescribeBlock = createDescribeBlock({
         emitter,
         // Update the global options.
         options: Object.assign({}, options, opts || {}),
-        ancestorNames,
+        ancestorNames: [ name ],
         blocks: newBlocks,
     });
 
@@ -82,7 +80,7 @@ export function describe(name, fn, opts = {}) {
         blockType,
         fn,
         name,
-        ancestorNames,
+        ancestorNames: [],
         blocks: newBlocks,
     });
 
@@ -103,17 +101,47 @@ export async function run(opts = {}) {
         } = _block.blocks;
 
         let subject;
+        let failure;
+
+        emitter.emit('describeBlockStart', { block: _block });
 
         for (const block of beforeBlocks) {
-            if (isFunction(block.blockRunner)) {
-                subject = await block.blockRunner();
+            if (failure) {
+                break;
             }
+
+            const start = Date.now();
+            let error;
+
+            try {
+                if (isFunction(block.blockRunner)) {
+                    subject = await block.blockRunner();
+                }
+            } catch (err) {
+                error = err;
+                failure = err;
+            }
+
+            const end = Date.now();
+            emitter.emit('beforeBlockEnd', { block, start, end, error });
         }
 
         for (const block of testBlocks) {
-            if (isFunction(block.fn)) {
-                block.fn(subject);
+            if (failure) {
+                break;
             }
+
+            let error;
+
+            if (isFunction(block.fn)) {
+                try {
+                    block.fn(subject);
+                } catch (err) {
+                    error = err;
+                }
+            }
+
+            emitter.emit('testBlockEnd', { block, error });
         }
 
         for (const block of childBlocks) {
@@ -121,12 +149,23 @@ export async function run(opts = {}) {
         }
 
         for (const block of afterBlocks) {
+            const start = Date.now();
+            let error;
+
             if (isFunction(block.blockRunner)) {
-                await block.blockRunner();
+                try {
+                    await block.blockRunner();
+                } catch (err) {
+                    error = err;
+                }
             }
+
+            const end = Date.now();
+            emitter.emit('afterBlockEnd', { block, start, end, error });
         }
     }
 
+    // Uncomment to inspect:
     // console.log(JSON.stringify(rootBlocks[0], null, 2));
 
     for (const block of rootBlocks) {
@@ -156,12 +195,7 @@ export function loadFromFiles(url, matchPattern = /test.js$/) {
         }
 
         for (const fileUrl of files) {
-            try {
-                await import(fileUrl);
-            } catch (err) {
-                const filepath = (fileUrl && fileUrl.href) ? fileUrl.href : fileUrl;
-                throw new Error(`Error loading file ${ filepath } => ${ err.message }`);
-            }
+            await import(fileUrl);
         }
     }
 
