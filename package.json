@@ -4,6 +4,9 @@
   "description": "A limited framework for scripting tests in JavaScript environments",
   "type": "module",
   "main": "mod.js",
+  "engines": {
+    "node": ">=16.13.2"
+  },
   "scripts": {
     "test": "eslint ./ && node ./test/run-tests.js",
     "lint": "eslint ./"
@@ -13,10 +16,11 @@
     "url": "git+https://github.com/kixxauth/kixx-test.git"
   },
   "files": [
-    "kixx-assert.js"
+    "mod.js"
   ],
   "devDependencies": {
-    "eslint": "~8.47.0"
+    "@eslint/js": "9.27.0",
+    "eslint": "9.27.0"
   },
   "keywords": [
     "testing"
