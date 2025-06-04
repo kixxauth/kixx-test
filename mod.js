@@ -3,7 +3,7 @@ import { DEFAULT_TIMEOUT } from './lib/constants.js';
 import DescribeBlock from './lib/describe-block.js';
 import EventEmitter from './lib/event-emitter.js';
 
-const _rootBlocks = [];
+export const _rootBlocks = [];
 let _runCalled = false;
 
 export function describe(name, fn, opts = {}) {
@@ -17,7 +17,7 @@ export function describe(name, fn, opts = {}) {
         disabled = true;
     }
 
-    if (!arguments.length > 1 && typeof fn !== 'function') {
+    if (arguments.length > 1 && typeof fn !== 'function') {
         throw new ProgrammerError('Second argument to describe() must be a function', {}, describe);
     }
 
