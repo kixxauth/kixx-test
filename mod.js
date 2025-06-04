@@ -34,7 +34,7 @@ export function describe(name, fn, opts = {}) {
     fn(newBlock.createInterface());
 }
 
-export function run(options = {}) {
+export function runTests(options = {}) {
     if (_runCalled) {
         throw new ProgrammerError('run() has already been called in this session');
     }
@@ -45,7 +45,7 @@ export function run(options = {}) {
 
     const finalPromise = _rootBlocks.reduce((promise, block) => {
         return promise.then(() => walkBlock(emitter, options, block));
-    });
+    }, Promise.resolve(null));
 
     finalPromise.then(function onComplete() {
         emitter.emit('complete');
@@ -76,7 +76,7 @@ async function walkBlock(emitter, options, block) {
             beforeblockFailure = true;
         } finally {
             const end = Date.now();
-            emitter.emit('beforeBlockEnd', { block, start, end, error });
+            emitter.emit('blockComplete', { block, start, end, error });
         }
     }
 
@@ -96,7 +96,7 @@ async function walkBlock(emitter, options, block) {
                 error = err;
             } finally {
                 const end = Date.now();
-                emitter.emit('testBlockEnd', { block, start, end, error });
+                emitter.emit('blockComplete', { block, start, end, error });
             }
         }
 
@@ -116,7 +116,7 @@ async function walkBlock(emitter, options, block) {
             error = err;
         } finally {
             const end = Date.now();
-            emitter.emit('afterBlockEnd', { block, start, end, error });
+            emitter.emit('blockComplete', { block, start, end, error });
         }
     }
 }
