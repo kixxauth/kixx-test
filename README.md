@@ -1,10 +1,12 @@
 Kixx Test
 =========
-A limited framework for scripting tests in JavaScript environments.
+A small framework for writing tests in JavaScript environments.
 
 Created by [Kris Walker](https://www.kriswalker.me) 2017 - 2025.
 
-For usage examples, see the `tests/` folder.
+For usage examples and guidelines, see `examples/README.md`.
+
+There is a reference script for setting up and running a folder of tests in `/test/run-tests.js`.
 
 ## Environment Support
 
