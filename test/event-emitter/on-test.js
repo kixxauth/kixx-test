@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import { assert, assertEqual } from 'kixx-assert';
 import { describe } from '../../mod.js';
 import EventEmitter from '../../lib/event-emitter.js';
+import { assertThrows } from '../helpers.js';
 
 
 describe('EventEmitter#on()', ({ it }) => {
@@ -44,5 +45,27 @@ describe('EventEmitter#on()', ({ it }) => {
         assertEqual(2, spy.callCount);
         assertEqual(eventObj, spy.firstCall.args[0]);
         assertEqual(eventObj, spy.secondCall.args[0]);
+    });
+
+    it('throws an error if eventName is not a string', () => {
+        const emitter = new EventEmitter();
+        const handler = sinon.spy();
+
+        assertThrows(() => emitter.on(null, handler), 'Event name must be a string');
+        assertThrows(() => emitter.on(undefined, handler), 'Event name must be a string');
+        assertThrows(() => emitter.on(123, handler), 'Event name must be a string');
+        assertThrows(() => emitter.on({}, handler), 'Event name must be a string');
+        assertThrows(() => emitter.on([], handler), 'Event name must be a string');
+    });
+
+    it('throws an error if handler is not a function', () => {
+        const emitter = new EventEmitter();
+
+        assertThrows(() => emitter.on('test', null), 'Handler must be a function');
+        assertThrows(() => emitter.on('test', undefined), 'Handler must be a function');
+        assertThrows(() => emitter.on('test', 'not a function'), 'Handler must be a function');
+        assertThrows(() => emitter.on('test', 123), 'Handler must be a function');
+        assertThrows(() => emitter.on('test', {}), 'Handler must be a function');
+        assertThrows(() => emitter.on('test', []), 'Handler must be a function');
     });
 });

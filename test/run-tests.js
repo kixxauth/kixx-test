@@ -89,7 +89,7 @@ async function main() {
             timeDelta = ` (${ end - start }ms)`;
         }
 
-        const suffix = `Block [${ block.concatName(' - ') }] completed${ timeDelta }`;
+        const suffix = `Block [${ block.concatName(' - ') }]${ timeDelta }`;
 
         if (error) {
             errorCount += 1;
