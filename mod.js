@@ -31,7 +31,9 @@ export function describe(name, fn, opts = {}) {
 
     _rootBlocks.push(newBlock);
 
-    fn(newBlock.createInterface());
+    if (fn) {
+        fn(newBlock.createInterface());
+    }
 }
 
 export function runTests(options = {}) {
@@ -56,10 +58,17 @@ export function runTests(options = {}) {
     return emitter;
 }
 
-async function walkBlock(emitter, options, block) {
+async function walkBlock(emitter, options, describeBlock) {
     let beforeblockFailure = false;
 
-    for (const runnableBlock of block.beforeBlocks) {
+    const {
+        beforeBlocks,
+        testBlocks,
+        afterBlocks,
+        childBlocks,
+    } = describeBlock;
+
+    for (const block of beforeBlocks) {
         if (beforeblockFailure) {
             // Always stop testing this block if there is a failure in the before block.
             break;
@@ -70,7 +79,7 @@ async function walkBlock(emitter, options, block) {
 
         try {
             // eslint-disable-next-line no-await-in-loop
-            await runnableBlock.run(emitter, options);
+            await block.run(emitter, options);
         } catch (err) {
             error = err;
             beforeblockFailure = true;
@@ -82,7 +91,7 @@ async function walkBlock(emitter, options, block) {
 
     // Always stop testing this block if there is a failure in the before block.
     if (!beforeblockFailure) {
-        for (const runnableBlock of block.testBlocks) {
+        for (const block of testBlocks) {
             if (beforeblockFailure) {
                 break;
             }
@@ -91,7 +100,7 @@ async function walkBlock(emitter, options, block) {
             let error = null;
             try {
                 // eslint-disable-next-line no-await-in-loop
-                await runnableBlock.run(emitter, options);
+                await block.run(emitter, options);
             } catch (err) {
                 error = err;
             } finally {
@@ -100,18 +109,18 @@ async function walkBlock(emitter, options, block) {
             }
         }
 
-        for (const child of block.childBlocks) {
+        for (const child of childBlocks) {
             // eslint-disable-next-line no-await-in-loop
-            await walkBlock(emitter, child, options);
+            await walkBlock(emitter, options, child);
         }
     }
 
-    for (const runnableBlock of block.afterBlocks) {
+    for (const block of afterBlocks) {
         const start = Date.now();
         let error = null;
         try {
             // eslint-disable-next-line no-await-in-loop
-            await runnableBlock.run(emitter, options);
+            await block.run(emitter, options);
         } catch (err) {
             error = err;
         } finally {
