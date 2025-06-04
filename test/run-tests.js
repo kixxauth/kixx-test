@@ -89,17 +89,17 @@ async function main() {
             timeDelta = ` (${ end - start }ms)`;
         }
 
-        const prefix = `Block [${ block.concatName(' - ') }] completed${ timeDelta }`;
+        const suffix = `Block [${ block.concatName(' - ') }] completed${ timeDelta }`;
 
         if (error) {
             errorCount += 1;
-            write(`${ RED }${ prefix } with errors:${ COLOR_RESET }${ EOL }`);
+            write(`${ RED }Test failed: ${ suffix }${ COLOR_RESET }${ EOL }`);
             const stack = error.stack.split(EOL).map((line) => line.trimEnd()).slice(0, MAX_STACK_LENGTH);
             for (const line of stack) {
                 write(line + EOL);
             }
         } else {
-            write(`${ GREEN }${ prefix } with no errors:${ COLOR_RESET }${ EOL }`);
+            write(`${ GREEN }Test passed: ${ suffix }${ COLOR_RESET }${ EOL }`);
         }
     });
 }
