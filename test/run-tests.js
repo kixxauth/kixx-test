@@ -41,7 +41,7 @@ async function main() {
         const timeElapsed = Date.now() - startTime;
         let exitCode = 0;
 
-        const prefix = `${ EOL }Test run is complete. Ran ${ testCount } tests in ${ timeElapsed }ms.${ EOL }`;
+        const prefix = `${ EOL + EOL }Test run is complete. Ran ${ testCount } tests in ${ timeElapsed }ms.${ EOL }`;
 
         let message;
         if (errorCount > 0) {
@@ -60,12 +60,12 @@ async function main() {
 
     emitter.on('multipleResolves', ({ block }) => {
         errorCount += 1;
-        write(`${ RED }Error: Block [${ block.concatName(' - ') }] had multiple resolves${ COLOR_RESET }${ EOL }`);
+        write(`${ EOL }${ RED }Error: Block [${ block.concatName(' - ') }] had multiple resolves${ COLOR_RESET }${ EOL }`);
     });
 
     emitter.on('multipleRejections', ({ block, error }) => {
         errorCount += 1;
-        write(`${ RED }Error: Block [${ block.concatName(' - ') }] had multiple rejections${ COLOR_RESET }${ EOL }`);
+        write(`${ EOL }${ RED }Error: Block [${ block.concatName(' - ') }] had multiple rejections${ COLOR_RESET }${ EOL }`);
         if (error) {
             const stack = error.stack.split(EOL).map((line) => line.trimEnd()).slice(0, MAX_STACK_LENGTH);
             for (const line of stack) {
@@ -77,10 +77,11 @@ async function main() {
     emitter.on('blockComplete', ({ block, start, end, error }) => {
         if (block.type === 'test') {
             testCount += 1;
+            write('.');
         }
 
         if (block.disabled) {
-            write(`${ YELLOW }Disabled Block: [${ block.concatName(' - ') }]${ COLOR_RESET }${ EOL }`);
+            write(`${ EOL }${ YELLOW }Disabled Block: [${ block.concatName(' - ') }]${ COLOR_RESET }${ EOL }`);
             return;
         }
 
@@ -93,13 +94,11 @@ async function main() {
 
         if (error) {
             errorCount += 1;
-            write(`${ RED }Test failed: ${ suffix }${ COLOR_RESET }${ EOL }`);
+            write(`${ EOL }${ RED }Test failed: ${ suffix }${ COLOR_RESET }${ EOL }`);
             const stack = error.stack.split(EOL).map((line) => line.trimEnd()).slice(0, MAX_STACK_LENGTH);
             for (const line of stack) {
                 write(line + EOL);
             }
-        } else {
-            write(`${ GREEN }Test passed: ${ suffix }${ COLOR_RESET }${ EOL }`);
         }
     });
 }
