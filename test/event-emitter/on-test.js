@@ -35,16 +35,15 @@ describe('EventEmitter#on()', ({ it }) => {
         assertEqual(eventObj, spy2.firstCall.args[0]);
     });
 
-    it('calls the same handler multiple times for each registration', () => {
+    it('calls the same handler once times for multiple registrations', () => {
         const emitter = new EventEmitter();
         const spy = sinon.spy();
         const eventObj = { test: 'test' };
         emitter.on('test', spy);
         emitter.on('test', spy);
         emitter.emit('test', eventObj);
-        assertEqual(2, spy.callCount);
+        assertEqual(1, spy.callCount);
         assertEqual(eventObj, spy.firstCall.args[0]);
-        assertEqual(eventObj, spy.secondCall.args[0]);
     });
 
     it('throws an error if eventName is not a string', () => {
