@@ -1,203 +1,131 @@
-import { ProgrammerError } from './lib/errors.js';
+import ProgrammerError from './lib/programmer-error.js';
+import { DEFAULT_TIMEOUT } from './lib/constants.js';
+import DescribeBlock from './lib/describe-block.js';
 import EventEmitter from './lib/event-emitter.js';
-import { createDescribeBlock } from './lib/describe-block.js';
 
-import {
-    isFunction,
-    isNonEmptyString,
-    readDirectoryEntries
-} from './lib/utils.js';
-
-
-const emitter = new EventEmitter();
-
-let options = {
-    timeout: 3000,
-};
-
-let rootBlocks = [];
-
-
-export function on(...args) {
-    emitter.on(...args);
-}
-
-export function once(...args) {
-    emitter.once(...args);
-}
-
-export function off(...args) {
-    emitter.off(...args);
-}
-
-export function clear() {
-    options = {
-        timeout: 3000,
-    };
-
-    rootBlocks = [];
-}
+export const _rootBlocks = [];
+let _runCalled = false;
 
 export function describe(name, fn, opts = {}) {
-
-    if (!isNonEmptyString(name)) {
-        throw new ProgrammerError(
-            'First argument to describe() must be a string',
-            null,
-            describe
-        );
+    if (!name || typeof name !== 'string') {
+        throw new ProgrammerError('First argument to describe() must be a string', {}, describe);
     }
 
+    let disabled = false;
     // If only a name argument is given, this block is considered to be disabled.
-    const isDisabled = arguments.length < 2;
-
-    if (!isDisabled && !isFunction(fn)) {
-        throw new ProgrammerError(
-            'Second argument to describe() must be a function',
-            null,
-            describe
-        );
+    if (opts.disabled || arguments.length === 1) {
+        disabled = true;
     }
 
-    const blockType = isDisabled ? 'xdescribe' : 'describe';
+    if (arguments.length > 1 && typeof fn !== 'function') {
+        throw new ProgrammerError('Second argument to describe() must be a function', {}, describe);
+    }
 
-    const newBlocks = {
-        beforeBlocks: [],
-        testBlocks: [],
-        childBlocks: [],
-        afterBlocks: [],
-    };
+    const timeout = Number.isInteger(opts.timeout) ? opts.timeout : DEFAULT_TIMEOUT;
 
-    const newDescribeBlock = createDescribeBlock({
-        emitter,
-        // Update the global options.
-        options: Object.assign({}, options, opts || {}),
-        ancestorNames: [ name ],
-        blocks: newBlocks,
+    const newBlock = new DescribeBlock({
+        namePath: [ name ],
+        disabled,
+        timeout,
     });
 
-    rootBlocks.push({
-        blockType,
-        fn,
-        name,
-        ancestorNames: [],
-        blocks: newBlocks,
-    });
+    _rootBlocks.push(newBlock);
 
-    if (!isDisabled) {
-        fn(newDescribeBlock);
+    if (fn) {
+        fn(newBlock.createInterface());
     }
 }
 
-export async function run(opts = {}) {
-    Object.assign(options, opts || {});
+export function runTests(options = {}) {
+    if (_runCalled) {
+        throw new ProgrammerError('run() has already been called in this session');
+    }
 
-    async function walkBlock(_block) {
-        const {
-            beforeBlocks,
-            testBlocks,
-            childBlocks,
-            afterBlocks,
-        } = _block.blocks;
+    _runCalled = true;
 
-        let subject;
-        let failure;
+    const emitter = options.emitter || new EventEmitter();
 
-        emitter.emit('describeBlockStart', { block: _block });
+    const finalPromise = _rootBlocks.reduce((promise, block) => {
+        return promise.then(() => walkBlock(emitter, options, block));
+    }, Promise.resolve(null));
 
-        for (const block of beforeBlocks) {
-            if (failure) {
+    finalPromise.then(function onComplete() {
+        emitter.emit('complete');
+    }, function onError(error) {
+        emitter.emit('error', error);
+    });
+
+    return emitter;
+}
+
+async function walkBlock(emitter, options, describeBlock) {
+    let beforeblockFailure = false;
+
+    const {
+        beforeBlocks,
+        testBlocks,
+        afterBlocks,
+        childBlocks,
+    } = describeBlock;
+
+    for (const block of beforeBlocks) {
+        if (beforeblockFailure) {
+            // Always stop testing this block if there is a failure in the before block.
+            break;
+        }
+
+        const start = Date.now();
+        let error = null;
+
+        try {
+            // eslint-disable-next-line no-await-in-loop
+            await block.run(emitter, options);
+        } catch (err) {
+            error = err;
+            beforeblockFailure = true;
+        } finally {
+            const end = Date.now();
+            emitter.emit('blockComplete', { block, start, end, error });
+        }
+    }
+
+    // Always stop testing this block if there is a failure in the before block.
+    if (!beforeblockFailure) {
+        for (const block of testBlocks) {
+            if (beforeblockFailure) {
                 break;
             }
 
             const start = Date.now();
-            let error;
-
+            let error = null;
             try {
-                if (isFunction(block.blockRunner)) {
-                    subject = await block.blockRunner();
-                }
+                // eslint-disable-next-line no-await-in-loop
+                await block.run(emitter, options);
             } catch (err) {
                 error = err;
-                failure = err;
+            } finally {
+                const end = Date.now();
+                emitter.emit('blockComplete', { block, start, end, error });
             }
+        }
 
+        for (const child of childBlocks) {
+            // eslint-disable-next-line no-await-in-loop
+            await walkBlock(emitter, options, child);
+        }
+    }
+
+    for (const block of afterBlocks) {
+        const start = Date.now();
+        let error = null;
+        try {
+            // eslint-disable-next-line no-await-in-loop
+            await block.run(emitter, options);
+        } catch (err) {
+            error = err;
+        } finally {
             const end = Date.now();
-            emitter.emit('beforeBlockEnd', { block, start, end, error });
-        }
-
-        for (const block of testBlocks) {
-            if (failure) {
-                break;
-            }
-
-            let error;
-
-            if (isFunction(block.fn)) {
-                try {
-                    block.fn(subject);
-                } catch (err) {
-                    error = err;
-                }
-            }
-
-            emitter.emit('testBlockEnd', { block, error });
-        }
-
-        for (const block of childBlocks) {
-            await walkBlock(block);
-        }
-
-        for (const block of afterBlocks) {
-            const start = Date.now();
-            let error;
-
-            if (isFunction(block.blockRunner)) {
-                try {
-                    await block.blockRunner();
-                } catch (err) {
-                    error = err;
-                }
-            }
-
-            const end = Date.now();
-            emitter.emit('afterBlockEnd', { block, start, end, error });
+            emitter.emit('blockComplete', { block, start, end, error });
         }
     }
-
-    // Uncomment to inspect:
-    // console.log(JSON.stringify(rootBlocks[0], null, 2));
-
-    for (const block of rootBlocks) {
-        await walkBlock(block);
-    }
-}
-
-export function loadFromFiles(url, matchPattern = /test.js$/) {
-
-    async function walkDirectoryLevel(directoryUrl) {
-        const entries = await readDirectoryEntries(directoryUrl);
-
-        const files = [];
-        const directories = [];
-
-        for (const pathObject of entries) {
-            if (pathObject.isDirectory) {
-                directories.push(pathObject.url);
-            }
-            if (pathObject.isFile && matchPattern.test(pathObject.url.pathname)) {
-                files.push(pathObject.url);
-            }
-        }
-
-        for (const dirUrl of directories) {
-            await walkDirectoryLevel(dirUrl);
-        }
-
-        for (const fileUrl of files) {
-            await import(fileUrl);
-        }
-    }
-
-    return walkDirectoryLevel(url);
 }
