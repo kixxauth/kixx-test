@@ -16,6 +16,7 @@
     "url": "git+https://github.com/kixxauth/kixx-test.git"
   },
   "files": [
+    "lib/",
     "mod.js"
   ],
   "devDependencies": {
