@@ -74,6 +74,15 @@ async function main() {
         }
     });
 
+    emitter.on('describeBlockStart', ({ block }) => {
+        const suffix = `Describe [${ block.concatName(' - ') }]`;
+        if (block.disabled) {
+            write(`${ EOL }${ YELLOW }Disabled ${ suffix }${ COLOR_RESET }${ EOL }`);
+        } else {
+            write(`${ EOL }${ suffix }${ EOL }`);
+        }
+    });
+
     emitter.on('blockComplete', ({ block, start, end, error }) => {
         if (block.type === 'test') {
             testCount += 1;

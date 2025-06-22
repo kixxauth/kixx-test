@@ -68,6 +68,8 @@ async function walkBlock(emitter, options, describeBlock) {
         childBlocks,
     } = describeBlock;
 
+    emitter.emit('describeBlockStart', { block: describeBlock });
+
     for (const block of beforeBlocks) {
         if (beforeblockFailure) {
             // Always stop testing this block if there is a failure in the before block.
