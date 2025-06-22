@@ -1,6 +1,6 @@
 {
   "name": "kixx-test",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A limited framework for scripting tests in JavaScript environments",
   "type": "module",
   "main": "mod.js",
