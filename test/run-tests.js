@@ -1,7 +1,7 @@
 import process from 'node:process';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runTests } from '../mod.js';
 
 import { EOL } from 'node:os';
@@ -74,6 +74,15 @@ async function main() {
         }
     });
 
+    emitter.on('describeBlockStart', ({ block }) => {
+        const suffix = `Describe [${ block.concatName(' - ') }]`;
+        if (block.disabled) {
+            write(`${ EOL }${ YELLOW }Disabled ${ suffix }${ COLOR_RESET }${ EOL }`);
+        } else {
+            write(`${ EOL }${ suffix }${ EOL }`);
+        }
+    });
+
     emitter.on('blockComplete', ({ block, start, end, error }) => {
         if (block.type === 'test') {
             testCount += 1;
@@ -134,7 +143,7 @@ async function readSubDirectories(parentDirectory) {
 }
 
 async function dynamicallyImportFile({ filepath }) {
-    await import(filepath);
+    await import(pathToFileURL(filepath));
 }
 
 async function readDirectory(dirpath) {
