@@ -1,7 +1,7 @@
 import process from 'node:process';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runTests } from '../mod.js';
 
 import { EOL } from 'node:os';
@@ -134,7 +134,7 @@ async function readSubDirectories(parentDirectory) {
 }
 
 async function dynamicallyImportFile({ filepath }) {
-    await import(filepath);
+    await import(pathToFileURL(filepath));
 }
 
 async function readDirectory(dirpath) {
